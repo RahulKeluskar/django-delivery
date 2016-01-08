@@ -37,7 +37,7 @@ class MenuItem(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     title = models.CharField(max_length=300)
     description = models.TextField(blank=True, default='')
-    price = models.DecimalField(max_digits=4, decimal_places=2)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __unicode__(self):
         return self.title

@@ -73,15 +73,10 @@ WSGI_APPLICATION = 'delivery.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'delivery',
-    }
-}
-
+import dj_database_url
+DATABASES = {}
+DATABASES['default'] = dj_database_url.config(os.environ.get('DATABASE_URL'))
+DATABASES['default']['CONN_MAX_AGE'] = 500
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -101,3 +96,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'staticfiles'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'delivery', 'static'),
+)
+
+#simplified static files serving
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
