@@ -1,6 +1,7 @@
 from django.db import models
 
 class Restaurant(models.Model):
+    """Data about each of the restaurants in the API"""
 
     PRICE_CHOICES = (
         (1, '$'),
@@ -34,6 +35,9 @@ class Restaurant(models.Model):
         return self.name
 
 class MenuItem(models.Model):
+    """A list of different items available on the menu of 
+    each restaurant"""
+
     restaurant = models.ForeignKey(Restaurant)
     title = models.CharField(max_length=300)
     description = models.TextField(blank=True, default='')
@@ -43,6 +47,8 @@ class MenuItem(models.Model):
         return self.title
 
 class OpenHours(models.Model):
+    """The hours when each restaurant is open each day"""
+
     DAYS = (
         (1, 'Monday'),
         (2, 'Tuesday'),
@@ -55,7 +61,7 @@ class OpenHours(models.Model):
 
     HOURS = ((i, i) for i in range(1, 25))
 
-    restaurant = models.ForeignKey(Restaurant)
+    restaurant = models.ForeignKey(Restaurant, related_name='hours')
     from_hour = models.SmallIntegerField(choices=HOURS)
     to_hour = models.SmallIntegerField(choices=HOURS)
     day = models.SmallIntegerField(choices=DAYS)
