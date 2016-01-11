@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from .models import Restaurant, OpenHours, Menu, MenuItem
+from .models import Restaurant, OpenHours, MenuItem
 
 #A good explanation of how to set up the hours with a serializer
 #http://stackoverflow.com/questions/25202222/django-rest-framework-setting-up-serializer-for-foreign-key
@@ -14,13 +14,14 @@ class HoursSerializer(serializers.ModelSerializer):
         fields = ('from_hour', 'to_hour',
             'day')
 
-class MenuSerializer(serializers.ModelSerializer):
+class MenuItemSerializer(serializers.ModelSerializer):
 
     links = serializers.SerializerMethodField()
 
     class Meta:
-        model = Menu
-        fields = ('restaurant', 'time_of_day', 'links')
+        model = MenuItem
+        fields = ('restaurant', 'name', 'description', 'price', 
+            'availability', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
@@ -45,3 +46,9 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'self' : reverse('restaurant-detail',
                 kwargs={'pk':obj.name},request=request)
         }
+    
+    def create(self, validated_data):
+        restaurant = Restaurant.objects.create(**validated_data)
+
+        return restaurant
+

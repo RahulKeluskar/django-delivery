@@ -34,8 +34,9 @@ class Restaurant(models.Model):
     def __unicode__(self):
         return self.name
 
-class Menu(models.Model):
-    """A menu for a given restaurant and time of day"""
+class MenuItem(models.Model):
+    """A list of different items available on the menu of 
+    each restaurant"""
 
     TIMES = (
         (1, 'All day'),
@@ -46,19 +47,10 @@ class Menu(models.Model):
     )
 
     restaurant = models.ForeignKey(Restaurant, related_name='menu_item')
-    time_of_day = models.SmallIntegerField(choices=TIMES, default=1)
-
-    def __unicode__(self):
-        return "{}'s menu: {}".format(self.restaurant, self.name)
-
-class MenuItem(models.Model):
-    """A list of different items available on the menu of 
-    each restaurant"""
-
-    menu = models.ForeignKey(Menu)
     name = models.CharField(max_length=300)
     description = models.TextField(blank=True, default='')
     price = models.DecimalField(max_digits=5, decimal_places=2)
+    availability = models.SmallIntegerField(choices=TIMES, default=1)
 
     def __unicode__(self):
         return self.title

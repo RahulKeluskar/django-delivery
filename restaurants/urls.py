@@ -4,4 +4,4 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'restaurants', views.RestaurantViewSet)
-router.register(r'menus', views.MenuViewSet)
+router.register(r'menu-items', views.MenuItemViewSet)
