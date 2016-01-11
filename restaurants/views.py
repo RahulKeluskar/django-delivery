@@ -3,8 +3,8 @@ from django.shortcuts import render
 from rest_framework import (authentication, 
     permissions, viewsets, filters)
 
-from .models import Restaurant
-from .serializers import RestaurantSerializer
+from .models import Restaurant, Menu
+from .serializers import RestaurantSerializer, MenuSerializer
 
 class DefaultsMixin(object):
     """Default setings for view authentication, pagination, 
@@ -13,6 +13,10 @@ class DefaultsMixin(object):
     authentication_classes = (
         authentication.BasicAuthentication,
         authentication.TokenAuthentication
+    )
+
+    permission_classes = (
+        permissions.IsAuthenticated,
     )
 
     paginate_by = 25
@@ -31,3 +35,10 @@ class RestaurantViewSet(DefaultsMixin, viewsets.ModelViewSet):
     serializer_class = RestaurantSerializer
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name', )
+
+class MenuViewSet(DefaultsMixin, viewsets.ModelViewSet):
+    """API endpoint for listing and creating menus"""
+
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    
