@@ -1,10 +1,11 @@
 from django.shortcuts import render
 
 from rest_framework import (authentication, 
-    permissions, viewsets, filters)
+    permissions, viewsets, filters, generics)
 
-from .models import Restaurant, MenuItem
-from .serializers import RestaurantSerializer, MenuItemSerializer
+from .models import Restaurant, MenuItem, OpenHours
+from .serializers import (RestaurantSerializer, MenuItemSerializer,
+    OpenHoursSerializer)
 
 class DefaultsMixin(object):
     """Default setings for view authentication, pagination, 
@@ -33,11 +34,31 @@ class RestaurantViewSet(DefaultsMixin, viewsets.ModelViewSet):
 
     queryset = Restaurant.objects.order_by('name')
     serializer_class = RestaurantSerializer
-    filter_backends = (filters.SearchFilter, )
-    search_fields = ('name', )
 
-class MenuItemViewSet(DefaultsMixin, viewsets.ModelViewSet):
-    """API endpoint for listing and creating menus"""
+class MenuViewSet(DefaultsMixin, viewsets.ModelViewSet):
+    """API endpoint for listing and creating restaurants"""
 
-    queryset = MenuItem.objects.all()
+    queryset = MenuItem.objects.order_by('name')
     serializer_class = MenuItemSerializer
+
+class MenuList(generics.ListCreateAPIView):
+    """API endpoint for listing and creating menus"""
+    model = MenuItem
+    serializer_class = MenuItemSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk', None)
+        if pk is not None:
+            return MenuItem.objects.filter(restaurant=pk)
+        return []
+
+class OpenHoursList(generics.ListCreateAPIView):
+    """API endpoint for listing and creating menus"""
+    model = OpenHours
+    serializer_class = OpenHoursSerializer
+    
+    def get_queryset(self):
+        pk = self.kwargs.get('pk', None)
+        if pk is not None:
+            return OpenHours.objects.filter(restaurant=pk)
+        return []

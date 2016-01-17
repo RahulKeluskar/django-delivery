@@ -3,19 +3,20 @@ from rest_framework.reverse import reverse
 
 from .models import Restaurant, OpenHours, MenuItem
 
-#A good explanation of how to set up the hours with a serializer
-#http://stackoverflow.com/questions/25202222/django-rest-framework-setting-up-serializer-for-foreign-key
 
+class OpenHoursSerializer(serializers.ModelSerializer):
 
-class HoursSerializer(serializers.ModelSerializer):
+    restaurant = serializers.HyperlinkedRelatedField(view_name='restaurant-detail',
+                                                     read_only=True)
 
     class Meta:
         model = OpenHours
-        fields = ('from_hour', 'to_hour',
-            'day')
+        fields = ('restaurant', 'day', 'from_hour', 'to_hour')
+        
 
 class MenuItemSerializer(serializers.ModelSerializer):
-
+    restaurant = serializers.HyperlinkedRelatedField(view_name='restaurant-detail',
+                                                     read_only=True)
     links = serializers.SerializerMethodField()
 
     class Meta:
@@ -27,28 +28,36 @@ class MenuItemSerializer(serializers.ModelSerializer):
         request = self.context['request']
         return {
             'self' : reverse('menuitem-detail',
-                kwargs={'pk':obj.title}, request=request)
+                kwargs={'pk':obj.id}, request=request)
         }
 
 class RestaurantSerializer(serializers.ModelSerializer):
-
+#link to menu items and open-hours
     links = serializers.SerializerMethodField()
-    hours = HoursSerializer(many=True)
 
     class Meta:
         model = Restaurant
         fields = ('name', 'address', 'description', 'cuisine',
-            'price', 'delivers', 'site_url', 'links', 'hours')
+            'price', 'delivers', 'site_url', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
-        return {
-            'self' : reverse('restaurant-detail',
-                kwargs={'pk':obj.name},request=request)
+        links = {
+            'self': reverse('restaurant-detail',
+                kwargs={'pk':obj.id},request=request),
+            'open_hours': None,
+            'menu': None
         }
-    
-    def create(self, validated_data):
-        restaurant = Restaurant.objects.create(**validated_data)
 
-        return restaurant
+        if obj.open_hours: 
+            links['open_hours'] = reverse('restaurant-hours',
+                kwargs={'pk':obj.id}, request=request)
+
+        if obj.menu_item:
+            links['menu'] = reverse('restaurant-menu',
+                kwargs={'pk':obj.id}, request=request)
+
+        return links
+
+        
 
