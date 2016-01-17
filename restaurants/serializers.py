@@ -6,13 +6,25 @@ from .models import Restaurant, OpenHours, MenuItem
 
 class OpenHoursSerializer(serializers.ModelSerializer):
 
-    restaurant = serializers.HyperlinkedRelatedField(view_name='restaurant-detail',
-                                                     read_only=True)
+    day_display = serializers.SerializerMethodField()
+    links = serializers.SerializerMethodField()
 
     class Meta:
         model = OpenHours
-        fields = ('restaurant', 'day', 'from_hour', 'to_hour')
+        fields = ('restaurant', 'links', 'day', 'day_display', 'from_hour', 'to_hour')
         
+    def get_day_display(self, obj):
+        return obj.get_day_display()
+
+    def get_links(self, obj):
+        request = self.context['request']
+        return {
+            'restaurant': reverse(
+                'restaurant-detail',
+                kwargs={'pk':obj.restaurant.pk},
+                request=request
+            )
+        }
 
 class MenuItemSerializer(serializers.ModelSerializer):
     restaurant = serializers.HyperlinkedRelatedField(view_name='restaurant-detail',
@@ -32,7 +44,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
         }
 
 class RestaurantSerializer(serializers.ModelSerializer):
-#link to menu items and open-hours
+
     links = serializers.SerializerMethodField()
 
     class Meta:
@@ -45,12 +57,12 @@ class RestaurantSerializer(serializers.ModelSerializer):
         links = {
             'self': reverse('restaurant-detail',
                 kwargs={'pk':obj.id},request=request),
-            'open_hours': None,
+            'hours': None,
             'menu': None
         }
 
         if obj.open_hours: 
-            links['open_hours'] = reverse('restaurant-hours',
+            links['hours'] = reverse('restaurant-hours',
                 kwargs={'pk':obj.id}, request=request)
 
         if obj.menu_item:
