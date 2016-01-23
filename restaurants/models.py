@@ -1,9 +1,8 @@
+from django.template.defaultfilters import slugify
+
 from django.db import models
 
 class Restaurant(models.Model):
-    """
-    Information about restaurants.
-    """
 
     PRICE_CHOICES = (
         (1, '$'),
@@ -24,7 +23,8 @@ class Restaurant(models.Model):
         ('MEX', 'Mexican')
     )
 
-    name = models.CharField(max_length=300)
+#    owner = models.ForeignKey('auth.User', related_name='restaurant')
+    name = models.CharField(max_length=300, unique=True)
     address = models.TextField(blank=True, default='')
     description = models.TextField(blank=True, default='')
     cuisine = models.CharField(max_length=100, 
@@ -32,23 +32,24 @@ class Restaurant(models.Model):
     price = models.SmallIntegerField(choices=PRICE_CHOICES, null=True)
     delivers = models.BooleanField(default=True)
     site_url = models.URLField(default=500)
+    slug = models.SlugField(unique=True, null=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Restaurant, self).save(*args, **kwargs)
+
 class MenuItem(models.Model):
-    """A list of different items available on the menu of 
-    each restaurant"""
 
     TIMES = (
         (1, 'All day'),
-        (2, 'Breakfast'),
-        (3, 'Lunch'),
-        (4, 'Dinner'),
-        (5, 'Kids menu')
+        (2, 'Morning'),
+        (3, 'Afternoon/Evening'),
     )
 
     restaurant = models.ForeignKey(Restaurant, related_name='menu_item')
@@ -58,12 +59,9 @@ class MenuItem(models.Model):
     availability = models.SmallIntegerField(choices=TIMES, default=1)
 
     def __unicode__(self):
-        return self.title
+        return self.name
 
 class OpenHours(models.Model):
-    """
-    The hours when each restaurant is open each day.
-    """
 
     DAYS = (
         (1, 'Monday'),
@@ -81,5 +79,3 @@ class OpenHours(models.Model):
     from_hour = models.SmallIntegerField(choices=HOURS, null=True)
     to_hour = models.SmallIntegerField(choices=HOURS, null=True)
     day = models.SmallIntegerField(choices=DAYS, null=True)
-
-

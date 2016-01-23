@@ -4,6 +4,8 @@ from rest_framework.reverse import reverse
 from .models import Restaurant, OpenHours, MenuItem
 
 
+#validate hours
+
 class OpenHoursSerializer(serializers.ModelSerializer):
 
     day_display = serializers.SerializerMethodField()
@@ -21,14 +23,13 @@ class OpenHoursSerializer(serializers.ModelSerializer):
         return {
             'restaurant': reverse(
                 'restaurant-detail',
-                kwargs={'pk':obj.restaurant.pk},
+                kwargs={'pk':obj.restaurant.pk,
+                        'slug':obj.restaurant.slug},
                 request=request
             )
         }
 
 class MenuItemSerializer(serializers.ModelSerializer):
-    restaurant = serializers.HyperlinkedRelatedField(view_name='restaurant-detail',
-                                                     read_only=True)
     links = serializers.SerializerMethodField()
 
     class Meta:
@@ -39,8 +40,10 @@ class MenuItemSerializer(serializers.ModelSerializer):
     def get_links(self, obj):
         request = self.context['request']
         return {
-            'self' : reverse('menuitem-detail',
-                kwargs={'pk':obj.id}, request=request)
+            'self' : reverse('menu-item-detail',
+                kwargs={'slug':obj.restaurant.slug, 
+                        'pk':obj.pk},
+                        request=request)
         }
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -49,6 +52,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
+        lookup_field = 'name'
         fields = ('name', 'address', 'description', 'cuisine',
             'price', 'delivers', 'site_url', 'links')
 
@@ -56,18 +60,18 @@ class RestaurantSerializer(serializers.ModelSerializer):
         request = self.context['request']
         links = {
             'self': reverse('restaurant-detail',
-                kwargs={'pk':obj.id},request=request),
+                kwargs={'slug':obj.slug},request=request),
             'hours': None,
             'menu': None
         }
 
         if obj.open_hours: 
-            links['hours'] = reverse('restaurant-hours',
-                kwargs={'pk':obj.id}, request=request)
+            links['hours'] = reverse('open-hours',
+                kwargs={'slug':obj.slug}, request=request)
 
         if obj.menu_item:
-            links['menu'] = reverse('restaurant-menu',
-                kwargs={'pk':obj.id}, request=request)
+            links['menu'] = reverse('menu-item-list',
+                kwargs={'slug':obj.slug}, request=request)
 
         return links
 

@@ -25,7 +25,6 @@ class DefaultsMixin(object):
     max_paginate_by = 100
     filter_backends = (
         filters.DjangoFilterBackend,
-        filters.SearchFilter,
         filters.OrderingFilter
     )
 
@@ -34,26 +33,41 @@ class RestaurantViewSet(DefaultsMixin, viewsets.ModelViewSet):
 
     queryset = Restaurant.objects.order_by('name')
     serializer_class = RestaurantSerializer
-
-class MenuViewSet(DefaultsMixin, viewsets.ModelViewSet):
-    """API endpoint for listing and creating restaurants"""
-
-    queryset = MenuItem.objects.order_by('name')
-    serializer_class = MenuItemSerializer
+    lookup_field = ('slug')
 
 class MenuList(generics.ListCreateAPIView):
-    """API endpoint for listing and creating menus"""
+    """
+    API endpoint for listing and creating menu items
+    for a specific restaurant
+    """
+    model = MenuItem
+    serializer_class = MenuItemSerializer(many=True)
+
+    def get_queryset(self):
+        slug = self.kwargs.get('slug', None)
+        if slug is not None:
+            restaurant = Restaurant.objects.filter(slug=slug)
+            return restaurant.menu_item
+        return []
+
+class MenuDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for viewing and editing a menu item instance
+    """
     model = MenuItem
     serializer_class = MenuItemSerializer
 
     def get_queryset(self):
         pk = self.kwargs.get('pk', None)
-        if pk is not None:
-            return MenuItem.objects.filter(restaurant=pk)
+        slug = self.kwargs.get('slug', None)
+        if pk is not None and slug is not None:
+            menu = Restaurant.objects.filter(slug=slug).menu_item
+            item = menu.get(pk=pk)
+            return item
         return []
 
 class OpenHoursList(generics.ListCreateAPIView):
-    """API endpoint for listing and creating menus"""
+    """API endpoint for listing and creating hours for a restaurant"""
     model = OpenHours
     serializer_class = OpenHoursSerializer
     

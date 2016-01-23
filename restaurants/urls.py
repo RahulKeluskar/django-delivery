@@ -6,14 +6,16 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'restaurants', views.RestaurantViewSet)
-router.register(r'menu-items', views.MenuViewSet)
 urlpatterns = router.urls
 
 urlpatterns.extend([
-    url(r'^restaurants/(?P<pk>\d+)/hours/$',
+    url(r'^restaurants/(?P<slug>[\w-]+)/hours/$',
         views.OpenHoursList.as_view(),
-        name='restaurant-hours'),
-    url(r'^restaurants/(?P<pk>\d+)/menu/$',
+        name='open-hours'),
+    url(r'^restaurants/(?P<slug>[\w-]+)/menu/$',
         views.MenuList.as_view(),
-        name='restaurant-menu')
+        name='menu-item-list'),
+    url(r'^restaurants/(?P<slug>[\w-]+)/menu/(?P<pk>\d+)/$',
+        views.MenuDetail.as_view(),
+        name='menu-item-detail')
 ])
