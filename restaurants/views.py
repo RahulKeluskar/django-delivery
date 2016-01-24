@@ -6,24 +6,15 @@ from rest_framework import (authentication,
 from .models import Restaurant, MenuItem, OpenHours
 from .serializers import (RestaurantSerializer, MenuItemSerializer,
     OpenHoursSerializer)
-
+from .permissions import HasGroupPermission
 from .utils import is_in_group
-
-class HasGroupPermission(permissions.BasePermission):
-    """
-    Ensure that user is in required groups.
-    """
-    def has_permission(self, request, view):    
-        required_groups_mapping = getattr(view, 'required_groups', {})
-        required_groups = required_groups_mapping.get(request.method, [])
-        return all([is_in_group(request.user, group_name) for group_name in required_groups])
 
 class DefaultsMixin(object):
     """Default setings for view authentication, pagination, 
     permissions, and filtering."""
 
     authentication_classes = (
-        authentication.SessionAuthentication,
+        authentication.BasicAuthentication,
     )
 
 
