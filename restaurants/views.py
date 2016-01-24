@@ -42,6 +42,10 @@ class RestaurantViewSet(DefaultsMixin, viewsets.ModelViewSet):
     queryset = Restaurant.objects.order_by('name')
     serializer_class = RestaurantSerializer
     lookup_field = ('slug')
+    permission_classes = (HasGroupPermission,)
+    required_groups = {
+        'POST': ['restaurant_owner'],
+    }
 
 class MenuList(generics.ListCreateAPIView):
     """
