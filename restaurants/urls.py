@@ -5,10 +5,9 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register(r'restaurants', views.RestaurantViewSet)
-urlpatterns = router.urls
+router.register(r'^restaurants', views.RestaurantViewSet)
 
-urlpatterns.extend([
+router.urls.extend([
     url(r'^restaurants/(?P<slug>[\w-]+)/hours/$',
         views.OpenHoursList.as_view(),
         name='open-hours'),
@@ -19,3 +18,4 @@ urlpatterns.extend([
         views.MenuDetail.as_view(),
         name='menu-item-detail')
 ])
+

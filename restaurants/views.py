@@ -7,18 +7,25 @@ from .models import Restaurant, MenuItem, OpenHours
 from .serializers import (RestaurantSerializer, MenuItemSerializer,
     OpenHoursSerializer)
 
+from .utils import is_in_group
+
+class HasGroupPermission(permissions.BasePermission):
+    """
+    Ensure that user is in required groups.
+    """
+    def has_permission(self, request, view):    
+        required_groups_mapping = getattr(view, 'required_groups', {})
+        required_groups = required_groups_mapping.get(request.method, [])
+        return all([is_in_group(request.user, group_name) for group_name in required_groups])
+
 class DefaultsMixin(object):
     """Default setings for view authentication, pagination, 
     permissions, and filtering."""
 
     authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication
+        authentication.SessionAuthentication,
     )
 
-    permission_classes = (
-        permissions.IsAuthenticated,
-    )
 
     paginate_by = 25
     paginate_by_param = 'page_size'
@@ -30,10 +37,15 @@ class DefaultsMixin(object):
 
 class RestaurantViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """API endpoint for listing and creating restaurants"""
-
+    #check if a user is a member of restaurant owner group.
+    #if not, set permission as read only
     queryset = Restaurant.objects.order_by('name')
     serializer_class = RestaurantSerializer
     lookup_field = ('slug')
+    permission_classes = (HasGroupPermission,)
+    required_groups = {
+        'POST': ['restaurant-owner'],
+    }
 
 class MenuList(generics.ListCreateAPIView):
     """

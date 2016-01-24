@@ -1,16 +1,18 @@
+from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from .models import Restaurant, OpenHours, MenuItem
 
-
+User = get_user_model()
 #validate hours
 
 class OpenHoursSerializer(serializers.ModelSerializer):
 
     day_display = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = OpenHours
         fields = ('restaurant', 'links', 'day', 'day_display', 'from_hour', 'to_hour')
