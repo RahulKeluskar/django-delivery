@@ -54,7 +54,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        lookup_field = 'slug'
         fields = ('name', 'address', 'description', 'cuisine',
             'price', 'delivers', 'site_url', 'links')
 

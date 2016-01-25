@@ -7,7 +7,6 @@ from .models import Restaurant, MenuItem, OpenHours
 from .serializers import (RestaurantSerializer, MenuItemSerializer,
     OpenHoursSerializer)
 from .permissions import HasGroupPermission
-from .utils import is_in_group
 
 class DefaultsMixin(object):
     """Default setings for view authentication, pagination, 
@@ -16,7 +15,6 @@ class DefaultsMixin(object):
     authentication_classes = (
         authentication.BasicAuthentication,
     )
-
 
     paginate_by = 25
     paginate_by_param = 'page_size'

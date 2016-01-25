@@ -1,5 +1,7 @@
 from rest_framework import permissions
 
+from .utils import is_in_group
+
 class HasGroupPermission(permissions.BasePermission):
     """
     Ensure that user is in required groups.
