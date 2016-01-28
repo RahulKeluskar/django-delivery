@@ -1,2 +1,4 @@
 *.pyc
 restaurants/migrations/*
+node_modules/
+staticfiles/

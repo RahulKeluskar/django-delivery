@@ -1,0 +1,34 @@
+{
+  "name": "django-delivery",
+  "version": "0.0.1",
+  "description": "A food ordering app a la GrubHub",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geezhawk/django-delivery.git"
+  },
+  "keywords": [
+    "django",
+    "webpack",
+    "react",
+    "bootstrap"
+  ],
+  "author": "Jonathan Cox",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geezhawk/django-delivery/issues"
+  },
+  "homepage": "https://github.com/geezhawk/django-delivery#readme",
+  "devDependencies": {
+    "babel": "^6.3.26",
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-preset-react": "^6.3.13",
+    "react": "^0.14.6",
+    "webpack": "^1.12.12",
+    "webpack-bundle-tracker": "0.0.93"
+  }
+}
