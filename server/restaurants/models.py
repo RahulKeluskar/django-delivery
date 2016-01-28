@@ -1,4 +1,5 @@
 from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
 
 from django.db import models
 
@@ -23,12 +24,14 @@ class Restaurant(models.Model):
         ('MEX', 'Mexican')
     )
 
-#    owner = models.ForeignKey('auth.User', related_name='restaurant')
+    owner = models.ForeignKey(User, related_name='restaurant')
     name = models.CharField(max_length=300, unique=True)
-    address = models.TextField(blank=True, default='')
-    description = models.TextField(blank=True, default='')
+    address = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     cuisine = models.CharField(max_length=100, 
-        choices=CUISINE_CHOICES, blank=True, default='')
+                               choices=CUISINE_CHOICES, 
+                               blank=True, 
+                               default='')
     price = models.SmallIntegerField(choices=PRICE_CHOICES, null=True)
     delivers = models.BooleanField(default=True)
     site_url = models.URLField(default=500)
