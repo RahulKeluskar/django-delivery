@@ -1,4 +1,6 @@
 var React = require('react')
 var App = require('./app')
+require('expose?$!expose?jQuery!jquery');
 
-React.render(<App/>, document.getElementById('container'))
+
+ReactDOM.render(<App url='/api/restaurants/'/>, document.getElementById('container'))

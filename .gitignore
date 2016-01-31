@@ -2,3 +2,5 @@
 restaurants/migrations/*
 node_modules/
 staticfiles/
+assets/bundles/
+webpack-stats.json
