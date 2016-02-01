@@ -14,6 +14,11 @@ module.exports = {
 	
 	plugins: [
 		new BundleTracker({filename: './webpack-stats.json'}),
+		new webpack.ProvidePlugin({
+			$: 'jquery',
+			jQuery: 'jquery',
+			'window.jQuery': 'jquery'
+		})
 	],
 	
 	module: {
@@ -24,31 +29,13 @@ module.exports = {
 		  	query: {
 		  		presets: ['react']
 		  	}
-		  },
-          {
-            test: /[\/\\]node_modules[\/\\]some-module[\/\\]index\.js$/,
-            loader: "imports?this=>window"
-          },
-          {
-            test: /[\/\\]node_modules[\/\\]some-module[\/\\]index\.js$/,
-            loader: "imports?define=>false"
-          }
+		  }
 		]
 	},
-	
-	plugins: [
-		new webpack.ProvidePlugin({
-			$: 'jquery',
-			jQuery: 'jquery'
-		})
-	],
 	
 	resolve: {
 		modulesDirectories: ['node_modules', 'bower_components'],
 		extensions: ['', '.js', '.jsx'],
-		alias: {
-			jquery: 'jquery/dist/jquery.js'
-		}
-	}
+	},
 }
 

@@ -7,7 +7,8 @@ module.exports = React.createClass({
 			datatype: 'json',
 			cache: false, 
 			success: function(data) {
-				this.setState({data:data})
+				this.setState({data:data[0].name});
+				console.log('setting state');
 			}.bind(this)
 		})
 	},
@@ -16,6 +17,7 @@ module.exports = React.createClass({
 	},
 	componentDidMount: function() {
 		this.loadRestaurantsFromServer();
+		setInterval(this.loadRestaurantsFromServer, this.props.pollInterval);
 	},
 	render: function() {
 		return ( 
