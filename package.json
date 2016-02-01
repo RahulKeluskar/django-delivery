@@ -1,7 +1,7 @@
 {
   "name": "django-delivery",
   "version": "0.0.1",
-  "description": "A food ordering app a la GrubHub",
+  "description": "A food ordering web-app like GrubHub",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
