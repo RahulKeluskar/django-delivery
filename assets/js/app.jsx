@@ -1,4 +1,5 @@
 var React = require('react')
+require('../css/bootstrap.min.css')
 
 module.exports = React.createClass({
 	loadRestaurantsFromServer: function() {
